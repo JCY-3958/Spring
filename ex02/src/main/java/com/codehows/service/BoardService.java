@@ -17,4 +17,6 @@ public interface BoardService {
 	//public List<BoardVO> getList();	 	 //전체 내용 가져오기
 	
 	public List<BoardVO> getList(Criteria cri);
+	
+	public int getTotal(Criteria cri);
 }
