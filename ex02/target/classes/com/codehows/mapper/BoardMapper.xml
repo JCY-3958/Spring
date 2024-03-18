@@ -6,6 +6,29 @@
 	<select id = "getList" resultType="com.codehows.domain.BoardVO">
 		<![CDATA[select * from tbl_board where bno > 0]]>
 	</select>
+	
+	<!-- include로 조금 더 깔끔하게 만듦 -->
+	<sql id="criteria">
+		<!-- prefix = 앞에 suffix = 뒤에 prefix가 중복 일 때 = OR -->
+		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'C'.toString()">
+							content like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+	
 	<select id="getListWithPaging" resultType="com.codehows.domain.BoardVO">
 		<![CDATA[
 			select bno, title, content, writer, regdate, updatedate
@@ -15,10 +38,14 @@
 						rownum rn, bno, title, content, writer, regdate, updatedate
 					from
 						tbl_board
-						where rownum <= #{pageNum} * #{amount}
+					where 
+		]]>
+			<include refid="criteria"></include>
+		<![CDATA[
+						rownum <= #{pageNum} * #{amount}
 					)
 			where rn > (#{pageNum} - 1) * #{amount}
-			]]>
+		]]>
 	</select>
 	
 	<insert id = "insert">
@@ -53,5 +80,14 @@
 		updateDate = sysdate
 		where bno = #{bno}
 	</update>
+	
+	<select id="getTotalCount" resultType = "int">
+      select count(*) from tbl_board where
+      
+      <!-- 이게 없으면 그냥 전체 게시물 개수를 표시하고
+      	이게 있으면 검색된 결과의 게시물 개수를 표시 가능 -->
+      <include refid="criteria"></include>
+      bno > 0
+  	</select>
 	
 </mapper>
