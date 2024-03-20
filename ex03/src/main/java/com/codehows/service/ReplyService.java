@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.codehows.domain.Criteria;
 import com.codehows.domain.ReplyVO;
+import com.codehows.domain.ReplyPageDTO;
 
 public interface ReplyService {
 	
@@ -21,4 +22,6 @@ public interface ReplyService {
 	
 	//mapper 안에 getListWithPaging
 	public List<ReplyVO> getList(Criteria cri, Long bno);
+	
+	public ReplyPageDTO getListPage(Criteria cri, Long bno);
 }

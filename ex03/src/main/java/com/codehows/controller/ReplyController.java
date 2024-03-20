@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codehows.domain.Criteria;
+import com.codehows.domain.ReplyPageDTO;
 import com.codehows.domain.ReplyVO;
 import com.codehows.service.ReplyService;
 
@@ -47,16 +48,18 @@ public class ReplyController {
 	
 	@GetMapping(value = "/pages/{bno}/{page}",
 			produces = { MediaType.APPLICATION_XML_VALUE,
-						MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<ReplyVO>> getList(
+						MediaType.APPLICATION_JSON_UTF8_VALUE})
+	public ResponseEntity<ReplyPageDTO> getList(
 			@PathVariable("page") int page,
 			@PathVariable("bno") Long bno) {
 		
-		log.info("getList.....");
 		Criteria cri = new Criteria(page, 10);
-		log.info(cri);
 		
-		return new ResponseEntity<>(service.getList(cri, bno), HttpStatus.OK);
+		log.info("get Reply List bno: " + bno);
+		
+		log.info("cri:" + cri);
+		
+		return new ResponseEntity<>(service.getListPage(cri, bno), HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/{rno}", 
