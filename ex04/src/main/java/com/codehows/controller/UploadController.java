@@ -205,7 +205,7 @@ public class UploadController {
 			//일반 파일과 섬네일 파일 삭제
 			file = new File("c:\\upload\\" + URLDecoder.decode(fileName, "UTF-8"));
 			file.delete();
-			
+			System.out.println("이미지 타입 : " + type);
 			//이미지일 경우 경로에 s_ 빼고 원본 파일 삭제
 			if(type.equals("image")) {
 				String largeFileName = file.getAbsolutePath().replace("s_", "");
