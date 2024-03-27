@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 빈으로 등록하여 로그인 성공 후 처리를 담당하는 핸들러로 지정 -->
+	<bean id="customAccessDenied" class="com.codehows.security.CustomAccessDeniedHandler"></bean>
+	<bean id="customLoginSuccess" class="com.codehows.security.CustomLoginSuccessHandler"></bean>
+	<!-- <bean id="customPasswordEncoder" class="com.codehows.security.CustomNoOpPasswordEncoder"></bean> -->
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+	
+	<security:http auto-config="true" use-expressions="true">
+		<security:intercept-url pattern="/sample/all" access="permitAll"/>
+		
+		<!-- ROLE_MEMBER라는 권한이 있는 사용자만 접근 가능 -->
+		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+		
+		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+	
+		<!-- <security:access-denied-handler error-page="/accessError"/> -->
+		<security:access-denied-handler ref="customAccessDenied"/>
+		
+		<!-- 기본 login 폼을 만들어줌 -->
+		<!-- <security:form-login/> -->
+		
+		<!-- 사용자 지정 login 폼 -->
+		<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
+		
+		<!-- logout button은 post방식으로 보내어 스프링 시큐리티 내부에서 동작 -->
+		<!-- post를 내부에서 처리하고 그냥 아무 정보도 안주고 url로 가도록 함. -->
+		<!-- true로 설정하면 로그아웃 시 세션을 무효화 시킴(로그아웃이 됨) -->
+		<security:logout logout-url="/customLogout" invalidate-session="true"/>
+	</security:http>
+	
+	<security:authentication-manager>
+		<security:authentication-provider>
+		
+			<security:jdbc-user-service data-source-ref="dataSource"/>
+			
+			<!-- <security:password-encoder ref="customPasswordEncoder"/> -->
+			<security:password-encoder ref="bcryptPasswordEncoder"/>
+			
+			<!-- 
+			<security:user-service>
+			
+				password는 인코딩 과정을 거쳐야 하는데 안하려면 {noop}을 붙여주면 됨
+				<security:user name="member" password="{noop}member"
+					authorities="ROLE_MEMBER"/>
+					
+				admin은 member와 admin에 둘다 접근 가능하도록
+				<security:user name="admin" password="{noop}admin"
+					authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+			
+			  
+			</security:user-service>
+			-->
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+</beans>
