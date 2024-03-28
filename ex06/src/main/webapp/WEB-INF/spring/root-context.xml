@@ -18,6 +18,7 @@
 	
 	<context:component-scan base-package="com.codehows.service"></context:component-scan>
 	<context:component-scan base-package="com.codehows.aop"></context:component-scan>
+	<context:component-scan base-package="com.codehows.mapper"></context:component-scan>
 	
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	
@@ -48,4 +49,7 @@
 		</bean>
 		
 		<tx:annotation-driven/>
+		
+		<mybatis-spring:scan
+			base-package="com.codehows.mapper"/>
 </beans>
