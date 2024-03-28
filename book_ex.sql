@@ -201,3 +201,19 @@ create table tbl_reply (
     select userid username, auth authority
     from tbl_member_auth
     where userid = 'admin90';
+    
+    SELECT mem.userid, userpw, username, enabled, regdate, updatedate, auth
+		FROM tbl_member mem LEFT OUTER JOIN tbl_member_auth auth on mem.userid=auth.userid
+		WHERE mem.userid = 'admin90';
+        
+    insert into tbl_member_auth(userid, auth) values('admin90', 'ROLE_MEMBER');
+    
+    create table persistent_logins (
+        username varchar2(64) not null,
+        series varchar2(64) primary key,
+        token varchar2(64) not null,
+        last_used timestamp not null
+    );
+    commit;
+    
+    select * from persistent_logins;
